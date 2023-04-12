@@ -29,8 +29,8 @@ O programa possui vários parâmetros que podem ser ajustados para controlar a s
 
 # Funcionamento:
 
-A simulação começa com um número inicial de criaturas e alimentos na tela. As criaturas são representadas como retângulos coloridos, enquanto os alimentos são representados como pequenos quadrados vermelhos. As criaturas se movem aleatoriamente pela tela e consomem alimentos para ganhar energia. Quando uma criatura tem energia suficiente e encontra outra criatura, ela pode se reproduzir e criar uma nova criatura.
+#### A simulação começa com um número inicial de criaturas e alimentos na tela. As criaturas são representadas como retângulos coloridos, enquanto os alimentos são representados como pequenos quadrados vermelhos. As criaturas se movem aleatoriamente pela tela e consomem alimentos para ganhar energia. Quando uma criatura tem energia suficiente e encontra outra criatura, ela pode se reproduzir e criar uma nova criatura.
 
-A cada "geração" da simulação, as criaturas com melhor desempenho (ou seja, as que conseguiram coletar mais alimentos) têm uma maior probabilidade de se reproduzir. As criaturas filhas herdam características de seus pais, mas também podem sofrer mutações aleatórias. A cada nova geração, o número total de criaturas na simulação é mantido constante, para evitar que a simulação cresça indefinidamente.
+#### A cada "geração" da simulação, as criaturas com melhor desempenho (ou seja, as que conseguiram coletar mais alimentos) têm uma maior probabilidade de se reproduzir. As criaturas filhas herdam características de seus pais, mas também podem sofrer mutações aleatórias. A cada nova geração, o número total de criaturas na simulação é mantido constante, para evitar que a simulação cresça indefinidamente.
 
-A simulação é interrompida quando o número de criaturas cai abaixo de um determinado limite mínimo, o que pode ocorrer se as criaturas não conseguirem coletar comida suficiente para sobreviver
+#### A simulação é interrompida quando o número de criaturas cai abaixo de um determinado limite mínimo, o que pode ocorrer se as criaturas não conseguirem coletar comida suficiente para sobreviver
