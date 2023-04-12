@@ -2,31 +2,31 @@ import random
 import pygame
 from pygame.locals import *
 
-# Parameters
-WIDTH = 1100
+# parametros
+WIDTH = 1000
 HEIGHT = 600
-NUM_CREATURES = 150
-NUM_FOOD = 1100
-CREATURE_SIZE = 8
+NUM_CREATURES = 125
+NUM_FOOD = 1000
+CREATURE_SIZE = 7
 FOOD_SIZE = 3
-SPEED = 4
-GENERATION_TICKS = 500
+SPEED = 2
+GENERATION_TICKS = 800
 REPRODUCTION_RATE = 2.5
 MUTATION_RATE = 2.5
 MUTATION_AMOUNT = 2
 INITIAL_ENERGY = 1000
 ENERGY_CONSUMPTION_RATE = 0.2
 MIN_CREATURES = 4
-FOOD_ENERGY = 570
+FOOD_ENERGY = 600
 COLORS = [(0, 255, 0), (0, 0, 255), (255, 255, 0)]
 
-# Initialize Pygame
+# inicializar pygame
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Simulação Auto-evolutiva")
 clock = pygame.time.Clock()
 
-# Configure font for displaying generation counter
+# indicacao de geracao, tamanho da fonte e cor
 font = pygame.font.Font(None, 36)
 
 def create_creature(speed=None, size=None, color=None):
@@ -41,6 +41,7 @@ def create_creature(speed=None, size=None, color=None):
     }
 
 
+# recoloca as criaturas e tbm tem um numero minimo 
 def replenish_creatures(creatures):
     while len(creatures) < MIN_CREATURES:
         creature = create_creature()
@@ -48,10 +49,10 @@ def replenish_creatures(creatures):
     return creatures
 
 
-# Create creatures
+# cria as criaturas 
 creatures = [create_creature(color=color) for color in COLORS for _ in range(NUM_CREATURES // len(COLORS))]
 
-# Create food
+# cria as comidas
 food = [
     {
         "x": random.randint(0, WIDTH),
@@ -65,7 +66,7 @@ def reproduce(parent1, parent2):
     child_speed = random.choice([parent1["speed"], parent2["speed"]])
     child_size = random.choice([parent1["size"], parent2["size"]])
 
-    # Add mutations
+    # adiciona as mutacoes
     if random.random() < MUTATION_RATE:
         child_speed += random.randint(-MUTATION_AMOUNT, MUTATION_AMOUNT)
         child_speed = max(1, child_speed)
@@ -76,7 +77,7 @@ def reproduce(parent1, parent2):
 
     child = create_creature(speed=child_speed, size=child_size, color=parent1["color"])
 
-    # Restaurar energia dos pais
+    # restaura a energia dos pais
     parent1["energy"] += FOOD_ENERGY
     parent2["energy"] += FOOD_ENERGY
 
@@ -99,20 +100,20 @@ running = True
 while running:
     screen.fill((000, 000, 000))
 
-    # Update creatures
+    # atualiza as criaturas
     for creature in creatures:
-        # Move randomly
+        # movimento randomico
         dx = random.randint(-creature["speed"], creature["speed"])
         dy = random.randint(-creature["speed"], creature["speed"])
        
         
         creature["x"] += dx
         creature["y"] += dy
-        # Limit to screen size
+        # limite do tamanho da tela
         creature["x"] = max(0, min(WIDTH - creature["size"], creature["x"]))
         creature["y"] = max(0, min(HEIGHT - creature["size"], creature["y"]))
 
-        # Check if creature found food
+        # verifica se a criatura achou comida
         for f in food:
             if (
                 abs(creature["x"] - f["x"]) < creature["size"]
@@ -123,10 +124,10 @@ while running:
                 f["x"] = random.randint(0, WIDTH)
                 f["y"] = random.randint(0, HEIGHT)
 
-        # Reduce creature's energy
+        # reduz a energia da criatura
         creature["energy"] -= ENERGY_CONSUMPTION_RATE
 
-    # Remove creatures with no energy
+    # remove criatuaras sem energia
     creatures = [creature for creature in creatures if creature["energy"] > 0]
 
     ticks += 1
@@ -137,11 +138,11 @@ while running:
         ticks = 0
         generation += 1
 
-    # Draw generation counter
+    # desenha o contador de geracoes
     generation_text = font.render(f"Geração: {generation}", True, (255, 255, 255))
     screen.blit(generation_text, (10, 10))
 
-    # Draw creatures and food
+    # desenha as criaturas e comida 
     for creature in creatures:
         pygame.draw.rect(
             screen,
@@ -155,12 +156,12 @@ while running:
             (f["x"], f["y"], FOOD_SIZE, FOOD_SIZE),
         )
 
-    # Check events
+    # verifica eventos
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
 
-    # Update screen and wait
+    # atualiza a tela e espera
     pygame.display.flip()
     clock.tick(60)
 
