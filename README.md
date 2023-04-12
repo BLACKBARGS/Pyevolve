@@ -10,23 +10,24 @@ Parâmetros
 
 O programa possui vários parâmetros que podem ser ajustados para controlar a simulação. Esses parâmetros estão no início do código e incluem:
 
-WIDTH: Largura da tela em pixels.
-HEIGHT: Altura da tela em pixels.
-NUM_CREATURES: Número inicial de criaturas na simulação.
-NUM_FOOD: Número inicial de alimentos na simulação.
-CREATURE_SIZE: Tamanho máximo das criaturas.
-FOOD_SIZE: Tamanho dos alimentos.
-SPEED: Velocidade máxima das criaturas.
-GENERATION_TICKS: Número de ticks (atualizações) antes de criar uma nova geração de criaturas.
-REPRODUCTION_RATE: Taxa de reprodução das criaturas.
-MUTATION_RATE: Taxa de mutação das criaturas.
-MUTATION_AMOUNT: Quantidade máxima de mutação permitida.
-INITIAL_ENERGY: Energia inicial das criaturas.
-ENERGY_CONSUMPTION_RATE: Taxa de consumo de energia das criaturas.
-MIN_CREATURES: Número mínimo de criaturas necessárias para manter a simulação em execução.
-FOOD_ENERGY: Quantidade de energia fornecida por cada comida.
-COLORS: Lista de cores usadas para criar as criaturas.
-Funcionamento:
+## WIDTH: Largura da tela em pixels.
+## HEIGHT: Altura da tela em pixels.
+## NUM_CREATURES: Número inicial de criaturas na simulação.
+## NUM_FOOD: Número inicial de alimentos na simulação.
+## CREATURE_SIZE: Tamanho máximo das criaturas.
+## FOOD_SIZE: Tamanho dos alimentos.
+## SPEED: Velocidade máxima das criaturas.
+## GENERATION_TICKS: Número de ticks (atualizações) antes de criar uma nova geração de criaturas.
+## REPRODUCTION_RATE: Taxa de reprodução das criaturas.
+## MUTATION_RATE: Taxa de mutação das criaturas.
+## MUTATION_AMOUNT: Quantidade máxima de mutação permitida.
+## INITIAL_ENERGY: Energia inicial das criaturas.
+## ENERGY_CONSUMPTION_RATE: Taxa de consumo de energia das criaturas.
+## MIN_CREATURES: Número mínimo de criaturas necessárias para manter a simulação em execução.
+## FOOD_ENERGY: Quantidade de energia fornecida por cada comida.
+## COLORS: Lista de cores usadas para criar as criaturas.
+
+# Funcionamento:
 
 A simulação começa com um número inicial de criaturas e alimentos na tela. As criaturas são representadas como retângulos coloridos, enquanto os alimentos são representados como pequenos quadrados vermelhos. As criaturas se movem aleatoriamente pela tela e consomem alimentos para ganhar energia. Quando uma criatura tem energia suficiente e encontra outra criatura, ela pode se reproduzir e criar uma nova criatura.
 
