@@ -2,13 +2,13 @@
 
 ### Este programa é uma simulação de um ecossistema em que criaturas se reproduzem e evoluem ao longo do tempo. A simulação é executada usando o pygame, uma biblioteca de jogos para Python
 
-#### Como usar
+# Como usar
 
 #### Para usar este programa, basta executar o código em um ambiente Python compatível com o pygame. Certifique-se de ter o pygame instalado antes de executar o programa. Depois de executar o programa, você verá uma janela com a simulação em execução.
 
-Parâmetros
+# Parâmetros
 
-O programa possui vários parâmetros que podem ser ajustados para controlar a simulação. Esses parâmetros estão no início do código e incluem:
+### O programa possui vários parâmetros que podem ser ajustados para controlar a simulação. Esses parâmetros estão no início do código e incluem:
 
 #### WIDTH: Largura da tela em pixels.
 #### HEIGHT: Altura da tela em pixels.
