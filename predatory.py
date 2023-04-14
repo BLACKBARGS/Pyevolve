@@ -7,17 +7,18 @@ WIDTH = 1000
 HEIGHT = 600
 NUM_CREATURES = 125
 NUM_FOOD = 1000
-CREATURE_SIZE = 5
+CREATURE_SIZE = 7
 FOOD_SIZE = 3
 SPEED = 3
 GENERATION_TICKS = 800
-REPRODUCTION_RATE = 5.0
+REPRODUCTION_RATE = 2.5
 MUTATION_RATE = 2.5
 MUTATION_AMOUNT = 2
-INITIAL_ENERGY = 5000
-ENERGY_CONSUMPTION_RATE = 0.1
-MIN_CREATURES = 100
-FOOD_ENERGY = 11800
+INITIAL_ENERGY = 1000
+ENERGY_CONSUMPTION_RATE = 0.2
+MIN_CREATURES = 4
+FOOD_ENERGY = 600
+STRENGTH_GAIN_PER_FOOD = 5
 COLORS = [(0, 255, 0), (0, 0, 255), (255, 255, 0)]
 
 # inicializar pygame
@@ -28,8 +29,22 @@ clock = pygame.time.Clock()
 
 # indicacao de geracao, tamanho da fonte e cor
 font = pygame.font.Font(None, 36)
+font_color = (255, 255, 255)
 
-def create_creature(speed=None, size=None, color=None):
+def update_font_color():
+    global font_color
+    r, g, b = font_color
+    r = (r + random.randint(0, 50)) % 256
+    g = (g + random.randint(0, 50)) % 256
+    b = (b + random.randint(0, 50)) % 256
+    font_color = (r, g, b)
+
+def update_font_size():
+    global font
+    new_size = random.randint(32, 48)
+    font = pygame.font.Font(None, new_size)
+
+def create_creature(speed=None, size=None, color=None, predator=False):
     return {
         "x": random.randint(0, WIDTH),
         "y": random.randint(0, HEIGHT),
@@ -38,8 +53,50 @@ def create_creature(speed=None, size=None, color=None):
         "speed": speed if speed is not None else random.randint(1, SPEED),
         "size": size if size is not None else random.randint(3, CREATURE_SIZE),
         "energy": INITIAL_ENERGY,
+        "predator": predator,
+        "strength": 0,
     }
 
+def move_creature(creature, creatures):
+    if creature["predator"]:
+        # Predador se move em direção à presa mais próxima
+        closest_prey = None
+        closest_distance = float("inf")
+        for other in creatures:
+            if other["predator"]:
+                continue
+            distance = ((creature["x"] - other["x"]) ** 2 + (creature["y"] - other["y"]) ** 2) ** 0.5
+            if distance < closest_distance:
+                closest_prey = other
+                closest_distance = distance
+
+        if closest_prey:
+            dx = closest_prey["x"] - creature["x"]
+            dy = closest_prey["y"] - creature["y"]
+            length = (dx ** 2 + dy ** 2) ** 0.5
+            if length > 0:
+                dx /= length
+                dy /= length
+            creature["x"] += creature["speed"] * dx
+            creature["y"] += creature["speed"] * dy
+    else:
+        # Presa tenta evitar predadores próximos
+        dx = 0
+        dy = 0
+        for other in creatures:
+            if not other["predator"]:
+                continue
+            distance = ((creature["x"] - other["x"]) ** 2 + (creature["y"] - other["y"]) ** 2) ** 0.5
+            if distance > 0 and distance < creature["size"] * 5:
+                dx += (creature["x"] - other["x"]) / distance
+                dy += (creature["y"] - other["y"]) / distance
+
+        length = (dx ** 2 + dy ** 2) ** 0.5
+        if length > 0:
+            dx /= length
+            dy /= length
+        creature["x"] += creature["speed"] * dx
+        creature["y"] += creature["speed"] * dy
 
 # recoloca as criaturas e tbm tem um numero minimo 
 def replenish_creatures(creatures):
@@ -48,9 +105,8 @@ def replenish_creatures(creatures):
         creatures.append(creature)
     return creatures
 
-
 # cria as criaturas 
-creatures = [create_creature(color=color) for color in COLORS for _ in range(NUM_CREATURES // len(COLORS))]
+creatures = [create_creature(color=color, predator=i % 2 == 0) for i, color in enumerate(COLORS) for _ in range(NUM_CREATURES // len(COLORS))]
 
 # cria as comidas
 food = [
@@ -75,30 +131,23 @@ def reproduce(parent1, parent2):
         child_size += random.randint(-MUTATION_AMOUNT, MUTATION_AMOUNT)
         child_size = max(1, child_size)
 
-    child = create_creature(speed=child_speed, size=child_size, color=parent1["color"])
+    child = create_creature(speed=child_speed, size=child_size, color=parent1["color"], predator=parent1["predator"])
 
-    # Transferir parte da energia dos pais para o filho
-    energy_transfer = parent1["energy"] * 1.65 + parent2["energy"] * 1.65
-    child["energy"] = energy_transfer
-    parent1["energy"] -= parent1["energy"] * 1.65
-    parent2["energy"] -= parent2["energy"] * 1.65
-
-    # Aumentar o tamanho do filho com base na quantidade de comida coletada pelos pais
-    growth_rate = (parent1["food"] + parent2["food"]) * 1.1
-    child["size"] += growth_rate
+    # restaura a energia dos pais
+    parent1["energy"] += FOOD_ENERGY
+    parent2["energy"] += FOOD_ENERGY
 
     return child
 
 def create_new_generation(creatures):
     creatures = sorted(creatures, key=lambda c: c["food"], reverse=True)
-    new_generation = []
-
-    for i in range(0, len(creatures) // 2):
-        parent1, parent2 = creatures[i], creatures[len(creatures) - 1 - i]
+    new_generation = creatures[: len(creatures) // 2]
+    for _ in range(len(creatures) // 2):
+        parent1 = random.choice(new_generation)
+        parent2 = random.choice(new_generation)
         if random.random() < REPRODUCTION_RATE:
             child = reproduce(parent1, parent2)
             new_generation.append(child)
-
     return new_generation
 
 ticks = 0
@@ -109,17 +158,12 @@ while running:
 
     # atualiza as criaturas
     for creature in creatures:
-        # movimento randomico
-        dx = random.randint(-creature["speed"], creature["speed"])
-        dy = random.randint(-creature["speed"], creature["speed"])
-       
-        
-        creature["x"] += dx
-        creature["y"] += dy
+        move_creature(creature, creatures)
+
         # limite do tamanho da tela
         creature["x"] = max(0, min(WIDTH - creature["size"], creature["x"]))
         creature["y"] = max(0, min(HEIGHT - creature["size"], creature["y"]))
-
+        
         # verifica se a criatura achou comida
         for f in food:
             if (
@@ -134,7 +178,7 @@ while running:
         # reduz a energia da criatura
         creature["energy"] -= ENERGY_CONSUMPTION_RATE
 
-    # remove criatuaras sem energia
+    # remove criaturas sem energia
     creatures = [creature for creature in creatures if creature["energy"] > 0]
 
     ticks += 1
@@ -144,9 +188,13 @@ while running:
         creatures = replenish_creatures(creatures)
         ticks = 0
         generation += 1
+        update_font_color()
+        update_font_size()
+        REPRODUCTION_RATE += 0.1
+        MUTATION_RATE += 0.01
 
     # desenha o contador de geracoes
-    generation_text = font.render(f"Geração: {generation}", True, (255, 255, 255))
+    generation_text = font.render(f"Geração: {generation}", True, font_color)
     screen.blit(generation_text, (10, 10))
 
     # desenha as criaturas e comida 
@@ -173,3 +221,4 @@ while running:
     clock.tick(60)
 
 pygame.quit()
+
